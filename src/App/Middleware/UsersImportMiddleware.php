@@ -29,8 +29,6 @@ class UsersImportMiddleware implements MiddlewareInterface
         $response = $client->send($apiData);
         $getBody = json_decode($response->getBody(), true);
 
-//        function saveUsers($getBody) {};
-
         foreach ($getBody as $user) {
             $query = $this->dbAdapter->query("insert into user_company (name, catchPhrase, bs) VALUES (:name, :catchPhrase, :bs)");
             $query->execute([
@@ -56,9 +54,11 @@ class UsersImportMiddleware implements MiddlewareInterface
                 'geo_id' => $geoId]);
             $addressId = $this->dbAdapter->driver->getLastGeneratedValue();
 
-            $query = $this->dbAdapter->query("insert into user (username, email, phone, website, address_id, company_id) 
-                                                VALUES (:username, :email, :phone, :website, :address_id, :company_id)");
+            $query = $this->dbAdapter->query("insert into user (id, name, username, email, phone, website, address_id, company_id) 
+                                                VALUES (:id, :name, :username, :email, :phone, :website, :address_id, :company_id)");
             $query->execute([
+                'id'=> $user['id'],
+                'name'=> $user['name'],
                 'username' => $user['username'],
                 'email' => $user['email'],
                 'phone' => $user['phone'],
